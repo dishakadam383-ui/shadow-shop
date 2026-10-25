@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SHADOW SHOP — A Magical Puzzle Adventure</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Ambient Floating Background Sparkles -->
+  <div class="ambient-stars" id="ambientStars" aria-hidden="true"></div>
+
+  <!-- MAIN APP CONTAINER -->
+  <div class="game-wrapper" id="gameWrapper">
+
+    <!-- TOP HEADER / IN-GAME HUD -->
+    <header class="game-header" id="gameHeader">
+      <div class="header-left">
+        <button id="btnHome" class="icon-btn" title="Home Menu" aria-label="Home Menu">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </button>
+        <div class="level-badge" id="levelBadge">
+          <span class="level-label">LEVEL</span>
+          <span class="level-num" id="hudLevelNum">1</span>
+        </div>
+        <h2 class="level-name" id="hudLevelName">Learn the Shadow</h2>
+      </div>
+
+      <div class="header-center">
+        <!-- In-game status indicators -->
+        <div class="objective-chips">
+          <div class="chip chip-star" id="chipStars" title="Shadow Stars Collected">
+            <span class="chip-icon">⭐</span>
+            <span class="chip-count" id="starCount">0 / 1</span>
+          </div>
+          <div class="chip chip-switch" id="chipSwitches" title="Switches Activated">
+            <span class="chip-icon">🔘</span>
+            <span class="chip-count" id="switchCount">0 / 0</span>
+          </div>
+          <div class="chip chip-door locked" id="chipDoor" title="Exit Door Status">
+            <span class="chip-icon" id="doorIcon">🔒</span>
+            <span class="chip-text" id="doorText">Locked</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <button id="btnHint" class="icon-btn hint-btn" title="Need a Hint?" aria-label="Show Hint">
+          <span class="btn-emoji">💡</span>
+          <span class="btn-text">Hint</span>
+        </button>
+        <button id="btnHelp" class="icon-btn" title="How to Play" aria-label="How to Play">
+          <span class="btn-emoji">❓</span>
+        </button>
+        <button id="btnRestart" class="icon-btn" title="Restart Level" aria-label="Restart Level">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+        </button>
+        <button id="btnSettings" class="icon-btn" title="Sound & Settings" aria-label="Settings">
+          <svg viewBox="0 0 24 24" class="icon"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- IN-GAME INSTRUCTION BANNER -->
+    <div class="instruction-banner" id="instructionBanner">
+      <div class="banner-content">
+        <span class="banner-icon" id="bannerIcon">✨</span>
+        <p class="banner-text" id="bannerText">Drag your shadow onto the star!</p>
+      </div>
+      <button class="banner-dismiss" id="bannerDismiss" title="Dismiss instruction">✕</button>
+    </div>
+
+    <!-- CANVAS PLAY AREA -->
+    <main class="canvas-container" id="canvasContainer">
+      <canvas id="gameCanvas"></canvas>
+      
+      <!-- Visual floating directional arrow -->
+      <div class="target-pointer" id="targetPointer" aria-hidden="true">
+        <div class="pointer-arrow">▼</div>
+        <div class="pointer-pulse"></div>
+      </div>
+
+      <!-- Drag Indicator Tooltip on Shadow -->
+      <div class="drag-hint" id="dragHint" aria-hidden="true">
+        <span>👆 Drag Me!</span>
+      </div>
+    </main>
+
+    <!-- TOUCH / MOBILE D-PAD CONTROLS -->
+    <div class="mobile-controls" id="mobileControls">
+      <div class="dpad">
+        <button class="dpad-btn dpad-up" id="btnDpadUp" aria-label="Move Up">▲</button>
+        <button class="dpad-btn dpad-left" id="btnDpadLeft" aria-label="Move Left">◀</button>
+        <button class="dpad-btn dpad-center" aria-hidden="true">🐾</button>
+        <button class="dpad-btn dpad-right" id="btnDpadRight" aria-label="Move Right">▶</button>
+        <button class="dpad-btn dpad-down" id="btnDpadDown" aria-label="Move Down">▼</button>
+      </div>
+      <div class="touch-hint-pill">
+        <span>💡 Move with D-Pad &bull; Drag shadow directly with touch</span>
+      </div>
+    </div>
+
+  </div> <!-- /game-wrapper -->
+
+  <!-- ==================== MODALS & OVERLAYS ==================== -->
+
+  <!-- HOME SCREEN MODAL -->
+  <div class="modal-overlay active" id="modalHome">
+    <div class="modal-card home-card">
+      <div class="home-hero">
+        <div class="title-badge">✨ A Gentle Magical Puzzle</div>
+        <h1 class="game-title">
+          <span class="title-word shadow-glow">SHADOW</span>
+          <span class="title-word shop-glow">SHOP</span>
+        </h1>
+        <p class="game-tagline">Guide cute Lumi & drag your independent magical shadow Umbra through walls to unlock each door!</p>
+      </div>
+
+      <div class="hero-character-preview">
+        <div class="preview-duo">
+          <div class="lumi-avatar" title="Lumi the light apprentice">
+            <div class="avatar-face">
+              <div class="avatar-ear ear-left"></div>
+              <div class="avatar-ear ear-right"></div>
+              <div class="avatar-eye eye-left"></div>
+              <div class="avatar-eye eye-right"></div>
+              <div class="avatar-blush blush-left"></div>
+              <div class="avatar-blush blush-right"></div>
+              <div class="avatar-mouth"></div>
+            </div>
+            <span class="avatar-caption">Lumi (WASD / Arrows)</span>
+          </div>
+
+          <div class="magic-link-line">
+            <span class="sparkle-dot"></span>
+          </div>
+
+          <div class="umbra-avatar" title="Umbra the magical shadow">
+            <div class="shadow-face">
+              <div class="shadow-glow-ring"></div>
+              <div class="avatar-eye eye-left shadow-eye"></div>
+              <div class="avatar-eye eye-right shadow-eye"></div>
+            </div>
+            <span class="avatar-caption">Umbra (Drag with Mouse/Touch)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="home-actions">
+        <button id="btnHomePlay" class="primary-btn pulse-glow">
+          <span class="btn-icon">🎮</span>
+          <span class="btn-text">Play Game</span>
+        </button>
+
+        <button id="btnHomeLevels" class="secondary-btn">
+          <span class="btn-icon">🗺️</span>
+          <span class="btn-text">Select Level</span>
+        </button>
+
+        <div class="button-row">
+          <button id="btnHomeHowToPlay" class="glass-btn">
+            <span class="btn-icon">📖</span>
+            <span class="btn-text">How to Play</span>
+          </button>
+          <button id="btnHomeSettings" class="glass-btn">
+            <span class="btn-icon">⚙️</span>
+            <span class="btn-text">Settings</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="home-footer-note">
+        <small>Beginner-friendly &bull; Gentle audio &bull; Auto-saves your progress</small>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL SELECT MODAL -->
+  <div class="modal-overlay" id="modalLevelSelect">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>🗺️ Select Level</h2>
+        <button class="modal-close-btn" id="btnCloseLevelSelect">✕</button>
+      </div>
+      <div class="level-cards-grid">
+        <!-- Level 1 -->
+        <div class="level-card" id="cardLevel1" data-level="1">
+          <div class="level-card-header">
+            <span class="card-num">01</span>
+            <span class="card-status status-unlocked">Ready</span>
+          </div>
+          <h3 class="card-title">Learn the Shadow</h3>
+          <p class="card-desc">Drag your shadow to collect your first star, then guide Lumi to the exit.</p>
+          <div class="card-meta">
+            <span class="meta-tag">⭐ 1 Star</span>
+            <span class="meta-tag">Tutorial</span>
+          </div>
+          <button class="card-play-btn" data-level="1">Play Level 1</button>
+        </div>
+
+        <!-- Level 2 -->
+        <div class="level-card" id="cardLevel2" data-level="2">
+          <div class="level-card-header">
+            <span class="card-num">02</span>
+            <span class="card-status" id="statusLevel2">Locked 🔒</span>
+          </div>
+          <h3 class="card-title">Behind the Wall</h3>
+          <p class="card-desc">Walls block your character, but your shadow passes right through to activate the switch.</p>
+          <div class="card-meta">
+            <span class="meta-tag">🔘 1 Switch</span>
+            <span class="meta-tag">Wall Crossing</span>
+          </div>
+          <button class="card-play-btn" data-level="2">Play Level 2</button>
+        </div>
+
+        <!-- Level 3 -->
+        <div class="level-card" id="cardLevel3" data-level="3">
+          <div class="level-card-header">
+            <span class="card-num">03</span>
+            <span class="card-status" id="statusLevel3">Locked 🔒</span>
+          </div>
+          <h3 class="card-title">The Final Shadow Challenge</h3>
+          <p class="card-desc">Coordinate character movement and shadow dragging across multiple puzzle chambers.</p>
+          <div class="card-meta">
+            <span class="meta-tag">⭐ 2 Stars</span>
+            <span class="meta-tag">🔘 2 Switches</span>
+            <span class="meta-tag">Grand Finale</span>
+          </div>
+          <button class="card-play-btn" data-level="3">Play Level 3</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY MODAL -->
+  <div class="modal-overlay" id="modalHowToPlay">
+    <div class="modal-card how-to-play-card">
+      <div class="modal-header">
+        <h2>📖 How to Play</h2>
+        <button class="modal-close-btn" id="btnCloseHowToPlay">✕</button>
+      </div>
+
+      <div class="instructions-list">
+        <div class="instruction-item">
+          <div class="item-icon-badge">🐾</div>
+          <div class="item-text">
+            <strong>1. Move your character</strong>
+            <p>Move your character with the arrow keys or WASD (or the on-screen D-pad on mobile).</p>
+          </div>
+        </div>
+
+        <div class="instruction-item">
+          <div class="item-icon-badge shadow-badge">🔮</div>
+          <div class="item-text">
+            <strong>2. Drag your purple shadow</strong>
+            <p>Drag the purple shadow with your mouse or finger anywhere across the board.</p>
+          </div>
+        </div>
+
+        <div class="instruction-item">
+          <div class="item-icon-badge wall-badge">🧱</div>
+          <div class="item-text">
+            <strong>3. Shadows pass through walls</strong>
+            <p>Your shadow can pass through walls in the marked area. Physical walls never block it!</p>
+          </div>
+        </div>
+
+        <div class="instruction-item">
+          <div class="item-icon-badge star-badge">⭐</div>
+          <div class="item-text">
+            <strong>4. Collect stars &amp; activate switches</strong>
+            <p>Touch stars and activate switches using your shadow to trigger magical mechanisms.</p>
+          </div>
+        </div>
+
+        <div class="instruction-item">
+          <div class="item-icon-badge door-badge">🚪</div>
+          <div class="item-text">
+            <strong>5. Guide character to the exit</strong>
+            <p>Once the exit opens, guide your character to it to complete the puzzle!</p>
+          </div>
+        </div>
+
+        <div class="instruction-item">
+          <div class="item-icon-badge restart-badge">🔄</div>
+          <div class="item-text">
+            <strong>6. Restart anytime if stuck</strong>
+            <p>Stuck? Press Restart to try again. Puzzles are relaxed with unlimited attempts.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btnGotIt" class="primary-btn">
+          <span>✨ Got It! Let's Play</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="modal-overlay" id="modalSettings">
+    <div class="modal-card settings-card">
+      <div class="modal-header">
+        <h2>⚙️ Sound &amp; Settings</h2>
+        <button class="modal-close-btn" id="btnCloseSettings">✕</button>
+      </div>
+
+      <div class="settings-group">
+        <!-- Music Section -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">🎵 Background Music</span>
+            <span class="setting-desc">Soft, relaxing ambient melodies</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleMusic" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row slider-row">
+          <div class="slider-label">
+            <span>Music Volume</span>
+            <span id="labelMusicVol">50%</span>
+          </div>
+          <input type="range" id="sliderMusicVol" min="0" max="100" value="50" class="styled-slider">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Sound Effects Section -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">✨ Sound Effects</span>
+            <span class="setting-desc">Movement, sparkles, clicks &amp; chimes</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="toggleSfx" checked>
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row slider-row">
+          <div class="slider-label">
+            <span>SFX Volume</span>
+            <span id="labelSfxVol">70%</span>
+          </div>
+          <input type="range" id="sliderSfxVol" min="0" max="100" value="70" class="styled-slider">
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Audio Test Button -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">🔊 Test Audio</span>
+            <span class="setting-desc">Play a quick gentle chime</span>
+          </div>
+          <button id="btnTestAudio" class="secondary-btn small-btn">Test Chime</button>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- Reset Progress -->
+        <div class="setting-row">
+          <div class="setting-info">
+            <span class="setting-title">🗑️ Reset Progress</span>
+            <span class="setting-desc">Lock levels back to Level 1</span>
+          </div>
+          <button id="btnResetProgress" class="danger-btn small-btn">Reset Data</button>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button id="btnSaveSettings" class="primary-btn">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LEVEL COMPLETE MODAL -->
+  <div class="modal-overlay" id="modalLevelComplete">
+    <div class="modal-card complete-card">
+      <div class="complete-icon-burst">🎉</div>
+      <h2 class="complete-title">Level Cleared!</h2>
+      <p class="complete-subtitle" id="completeLevelName">Learn the Shadow</p>
+
+      <div class="complete-stats">
+        <div class="stat-pill">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-label">Stars:</span>
+          <span class="stat-value" id="completeStars">1 / 1</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon">⏱️</span>
+          <span class="stat-label">Time:</span>
+          <span class="stat-value" id="completeTime">0:24</span>
+        </div>
+      </div>
+
+      <div class="complete-actions">
+        <button id="btnReplayLevel" class="secondary-btn">
+          <span class="btn-icon">🔄</span>
+          <span class="btn-text">Replay</span>
+        </button>
+        <button id="btnNextLevel" class="primary-btn pulse-glow">
+          <span class="btn-icon">✨</span>
+          <span class="btn-text">Next Level</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- FINAL VICTORY MODAL -->
+  <div class="modal-overlay" id="modalVictory">
+    <div class="modal-card victory-card">
+      <canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+      <div class="trophy-badge">🏆</div>
+      <h1 class="victory-title">Congratulations!</h1>
+      <h3 class="victory-subtitle">You have mastered the shadows!</h3>
+      <p class="victory-message">Lumi and Umbra have illuminated every corner of the Shadow Shop together. Thank you for playing this magical adventure!</p>
+
+      <div class="complete-stats">
+        <div class="stat-pill">
+          <span class="stat-icon">⭐</span>
+          <span class="stat-label">Total Stars:</span>
+          <span class="stat-value" id="victoryTotalStars">3 / 3</span>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon">🌟</span>
+          <span class="stat-label">Levels Cleared:</span>
+          <span class="stat-value">3 / 3</span>
+        </div>
+      </div>
+
+      <div class="victory-actions">
+        <button id="btnVictoryPlayAgain" class="primary-btn pulse-glow">
+          <span class="btn-icon">🎮</span>
+          <span class="btn-text">Play Again</span>
+        </button>
+        <button id="btnVictoryHome" class="secondary-btn">
+          <span class="btn-icon">🏠</span>
+          <span class="btn-text">Main Menu</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOME CONFIRMATION MODAL -->
+  <div class="modal-overlay" id="modalConfirmHome">
+    <div class="modal-card confirm-card">
+      <div class="modal-header">
+        <h2>Return to Home?</h2>
+      </div>
+      <p>Your current level progress will be restarted, but unlocked levels remain saved.</p>
+      <div class="modal-footer button-row">
+        <button id="btnCancelHome" class="secondary-btn">Stay &amp; Play</button>
+        <button id="btnConfirmHome" class="primary-btn">Yes, Go Home</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script inclusion -->
+  <script src="script.js"></script>
+</body>
+</html>
